@@ -315,99 +315,196 @@
     }
     .pwd-btn-submit { background: #111; color: #fff; }
     .pwd-btn-cancel { background: #eee; color: #444; }
-    /* LIGHTBOX STYLES */
-    .lightbox {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(10, 10, 10, 0.96);
-      z-index: 1000;
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .lightbox.active { display: flex; opacity: 1; }
-    .lightbox-header {
-      width: 100%;
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #fff;
-    }
-    .lightbox-counter { font-size: 0.85rem; letter-spacing: 2px; color: #aaa; }
-    .lightbox-actions { display: flex; align-items: center; gap: 20px; }
-    .lightbox-heart-btn {
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      border-radius: 50%;
-      width: 46px; height: 46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.22s ease;
-    }
-    .lightbox-heart-btn:hover { background: rgba(255, 255, 255, 0.3); }
-    .lightbox-heart-btn svg {
-      width: 22px; height: 22px;
-      fill: none; stroke: #ffffff; stroke-width: 2;
-      pointer-events: none;
-    }
-    .lightbox-heart-btn.selected { background: #ffffff; }
-    .lightbox-heart-btn.selected svg {
-      fill: var(--accent-heart);
-      stroke: var(--accent-heart);
-    }
-    .lightbox-close {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 2rem;
-      cursor: pointer;
-      opacity: 0.8;
-    }
-    .lightbox-body {
-      position: relative;
-      width: 100%;
-      height: calc(100vh - 120px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 80px;
-    }
-    .lightbox-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      user-select: none;
-    }
-    .lightbox-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      width: 50px; height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-    .lightbox-prev { left: 25px; }
-    .lightbox-next { right: 25px; }
-    .lightbox-caption { padding: 15px 0 25px 0; color: #888; font-size: 0.8rem; letter-spacing: 1px; }
-    .error-box {
-      padding: 20px; margin: 30px auto; max-width: 600px;
-      background-color: #fff0f0; color: #c0392b; border: 1px solid #f5c6cb;
-      border-radius: 4px; font-size: 0.9rem; text-align: center;
-    }
+/* LIGHTBOX STYLES */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: #000;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lightbox.active { display: flex; opacity: 1; }
+
+/* Header flotante transparente sobre la imagen */
+.lightbox-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+.lightbox-header > * { pointer-events: auto; }
+.lightbox-counter {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #eee;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.lightbox-close {
+  background: rgba(0,0,0,0.45);
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.2s ease;
+}
+.lightbox-close:hover { background: rgba(0,0,0,0.75); }
+
+/* Área de la imagen: ocupa todo el espacio disponible */
+.lightbox-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  display: block;
+}
+
+/* Botón de corazón FLOTANTE sobre la imagen, abajo a la derecha */
+.lightbox-heart-btn {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.lightbox-heart-btn:hover {
+  background: rgba(0, 0, 0, 0.75);
+  transform: scale(1.08);
+}
+.lightbox-heart-btn:active { transform: scale(0.95); }
+.lightbox-heart-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+.lightbox-heart-btn.selected { background: rgba(255, 255, 255, 0.95); }
+.lightbox-heart-btn.selected svg {
+  fill: var(--accent-heart);
+  stroke: var(--accent-heart);
+}
+
+/* Caption flotante abajo a la izquierda */
+.lightbox-caption {
+  position: absolute;
+  bottom: 28px;
+  left: 25px;
+  z-index: 20;
+  color: #ddd;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Navegación con flechas (en desktop) */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: white;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  z-index: 22;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.2s ease;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.28); }
+.lightbox-prev { left: 20px; }
+.lightbox-next { right: 20px; }
+
+/* Ocultar flechas en móvil (se usa swipe) */
+@media (max-width: 768px) {
+  .lightbox-nav { display: none; }
+  .lightbox-heart-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+  }
+  .lightbox-heart-btn svg { width: 26px; height: 26px; }
+  .lightbox-caption {
+    bottom: 24px;
+    left: 20px;
+    font-size: 0.7rem;
+    max-width: 55%;
+  }
+  .lightbox-counter { font-size: 0.75rem; }
+}
+
+/* Transición suave al cambiar de imagen */
+.lightbox-img.fade {
+  animation: lbFade 0.25s ease;
+}
+@keyframes lbFade {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+    
     @media (max-width: 768px) {
       header.sticky-nav { padding: 12px 20px; }
       .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
