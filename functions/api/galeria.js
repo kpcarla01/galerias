@@ -8,7 +8,7 @@ export async function onRequest(context) {
   const galeriaId = url.searchParams.get('galeria') || 'G001';
 
   // ⚠️ Tu URL de Apps Script (NO cambiar salvo que generes una nueva implementación)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxq-kG8G-nu12nuPfky-cdAbxCG7Wqw_5jljFuhPLDYy3OieRsq789nVCqUMR81WZJo/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvzrz8IUR0oKpwElD-iX6ildb41DiLwne4teDVVHPRYBnXn4PsaHwMir_4PE85O3So/exec';
 
   // ---- GET: obtener datos de la galería ----
   if (request.method === 'GET') {
