@@ -563,24 +563,22 @@
       </div>
     </div>
   </div>
-  <!-- LIGHTBOX MODAL -->
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-header">
-      <div class="lightbox-counter" id="lightbox-counter">1 / 100</div>
-      <div class="lightbox-actions">
-        <button class="lightbox-heart-btn" id="lightbox-heart" onclick="toggleSelectCurrentLightbox()">
-          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </button>
-        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-      </div>
-    </div>
-    <div class="lightbox-body">
-      <button class="lightbox-nav lightbox-prev" onclick="prevImage()">&lsaquo;</button>
-      <img id="lightbox-img" class="lightbox-img" src="" alt="Vista ampliada">
-      <button class="lightbox-nav lightbox-next" onclick="nextImage()">&rsaquo;</button>
-    </div>
-    <div class="lightbox-caption" id="lightbox-filename">foto.jpg</div>
+ <!-- LIGHTBOX MODAL -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-body">
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Vista ampliada">
+    <button class="lightbox-nav lightbox-prev" onclick="prevImage()" aria-label="Anterior">&lsaquo;</button>
+    <button class="lightbox-nav lightbox-next" onclick="nextImage()" aria-label="Siguiente">&rsaquo;</button>
   </div>
+  <div class="lightbox-header">
+    <div class="lightbox-counter" id="lightbox-counter">1 / 100</div>
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">&times;</button>
+  </div>
+  <button class="lightbox-heart-btn" id="lightbox-heart" onclick="toggleSelectCurrentLightbox()" aria-label="Seleccionar">
+    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+  </button>
+  <div class="lightbox-caption" id="lightbox-filename">foto.jpg</div>
+</div>
   <script>
     // URL DE TU GOOGLE APPS SCRIPT
     const SCRIPT_URL = "/api/galeria";
