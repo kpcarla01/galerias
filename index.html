@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería de Selección</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #111111;
+      --text-muted: #777777;
+      --accent-heart: #e74c3c;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    /* HERO COVER */
+    .hero-cover {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 500px;
+      background-color: #1a1a1a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.82;
+      filter: brightness(0.85);
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.45) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #ffffff;
+      padding: 0 20px;
+    }
+    .hero-photographer {
+      font-size: 0.85rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 300;
+      letter-spacing: 3px;
+      line-height: 1.1;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    .hero-subtitle {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 300;
+      letter-spacing: 2px;
+      opacity: 0.9;
+    }
+    .scroll-down {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      color: #ffffff;
+      cursor: pointer;
+      animation: bounce 2s infinite;
+      background: transparent;
+      border: none;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+      40% { transform: translate(-50%, -10px); }
+      60% { transform: translate(-50%, -5px); }
+    }
+    /* STICKY HEADER */
+    header.sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #f0f0f0;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-info { display: flex; flex-direction: column; }
+    .photographer-name {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .event-name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+    
+    /* BOTÓN CONTADOR DE SELECCIÓN */
+    .selection-counter-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .selection-counter-btn:hover {
+      background: #f5f5f5;
+      border-color: #eee;
+      transform: scale(1.03);
+    }
+    .selection-counter-btn svg { fill: var(--accent-heart); }
+    .selection-counter-btn.active-filter {
+      background: #fff0f0;
+      border-color: #f5c6cb;
+    }
+    /* BARRA DE NAVEGACIÓN DE SUBGALERÍAS / CATEGORÍAS */
+    .category-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 25px 10px 35px 10px;
+      flex-wrap: wrap;
+    }
+    .category-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .category-btn:hover { color: var(--text-main); }
+    .category-btn.active {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .category-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background-color: var(--text-main);
+    }
+    /* GALLERY GRID */
+    .gallery-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 10px 25px 100px 25px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .photo-card {
+      position: relative;
+      overflow: hidden;
+      background-color: #f7f7f7;
+      cursor: pointer;
+      aspect-ratio: 2/3;
+    }
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .photo-card:hover img { transform: scale(1.04); }
+    .heart-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      border: none;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .heart-btn:hover {
+      background: rgba(0, 0, 0, 0.75);
+      transform: scale(1.1);
+    }
+    .heart-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2;
+      pointer-events: none;
+    }
+    .heart-btn.selected { background: rgba(255, 255, 255, 0.95); }
+    .heart-btn.selected svg {
+      fill: var(--accent-heart);
+      stroke: var(--accent-heart);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 1rem;
+      grid-column: 1 / -1;
+    }
+    /* MODAL DE CONTRASEÑA */
+    .pwd-modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .pwd-modal-overlay.active { display: flex; }
+    .pwd-modal-card {
+      background: #ffffff;
+      padding: 35px 30px;
+      max-width: 400px;
+      width: 100%;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .pwd-modal-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .pwd-modal-card p {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .pwd-modal-card input {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      outline: none;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .pwd-modal-card input:focus { border-color: #111; }
+    .pwd-modal-btns { display: flex; gap: 10px; }
+    .pwd-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .pwd-btn-submit { background: #111; color: #fff; }
+    .pwd-btn-cancel { background: #eee; color: #444; }
+    /* LIGHTBOX STYLES */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(10, 10, 10, 0.96);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.active { display: flex; opacity: 1; }
+    .lightbox-header {
+      width: 100%;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+    .lightbox-counter { font-size: 0.85rem; letter-spacing: 2px; color: #aaa; }
+    .lightbox-actions { display: flex; align-items: center; gap: 20px; }
+    .lightbox-heart-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50%;
+      width: 46px; height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+    .lightbox-heart-btn:hover { background: rgba(255, 255, 255, 0.3); }
+    .lightbox-heart-btn svg {
+      width: 22px; height: 22px;
+      fill: none; stroke: #ffffff; stroke-width: 2;
+      pointer-events: none;
+    }
+    .lightbox-heart-btn.selected { background: #ffffff; }
+    .lightbox-heart-btn.selected svg {
+      fill: var(--accent-heart);
+      stroke: var(--accent-heart);
+    }
+    .lightbox-close {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+    .lightbox-body {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 80px;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      user-select: none;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .lightbox-prev { left: 25px; }
+    .lightbox-next { right: 25px; }
+    .lightbox-caption { padding: 15px 0 25px 0; color: #888; font-size: 0.8rem; letter-spacing: 1px; }
+    .error-box {
+      padding: 20px; margin: 30px auto; max-width: 600px;
+      background-color: #fff0f0; color: #c0392b; border: 1px solid #f5c6cb;
+      border-radius: 4px; font-size: 0.9rem; text-align: center;
+    }
+    @media (max-width: 768px) {
+      header.sticky-nav { padding: 12px 20px; }
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+      .lightbox-body { padding: 0 15px; }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .category-nav { gap: 10px; padding: 15px 5px; }
+      .category-btn { font-size: 0.75rem; padding: 6px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HERO COVER -->
+  <section class="hero-cover" id="hero">
+    <img id="hero-img" class="hero-bg" src="" alt="Portada" style="display:none;">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-photographer" id="hero-photographer"></div>
+      <h1 class="hero-title" id="hero-title">Cargando Galería...</h1>
+      <div class="hero-subtitle" id="hero-subtitle"></div>
+    </div>
+    <button class="scroll-down" onclick="scrollToGallery()" aria-label="Ver fotos">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    </button>
+  </section>
+  <!-- STICKY HEADER -->
+  <header class="sticky-nav" id="gallery-header">
+    <div class="brand-info">
+      <span class="photographer-name" id="nav-photographer"></span>
+      <span class="event-name" id="nav-title">Galería</span>
+    </div>
+    <!-- BOTÓN CONTADOR DE SELECCIÓN CON TOOLTIP DE HOVER -->
+    <button class="selection-counter-btn" id="counter-btn" onclick="toggleFilterSelected()" title="Ver seleccionadas">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span id="selected-count">0</span>
+    </button>
+  </header>
+  <!-- GALLERY MAIN CONTAINER -->
+  <main class="gallery-container">
+    <div id="error-container"></div>
+    
+    <!-- BARRA DE SUBGALERÍAS / CATEGORÍAS -->
+    <nav class="category-nav" id="category-nav" style="display: none;"></nav>
+    <!-- GRID DE FOTOS -->
+    <div class="gallery-grid" id="gallery"></div>
+  </main>
+  <!-- MODAL DE CONTRASEÑA -->
+  <div class="pwd-modal-overlay" id="pwd-modal">
+    <div class="pwd-modal-card">
+      <h3>Galería Protegida</h3>
+      <p>Ingresá la contraseña proporcionada por el fotógrafo para poder seleccionar fotos.</p>
+      <input type="password" id="pwd-input" placeholder="Contraseña">
+      <div class="pwd-modal-btns">
+        <button class="pwd-btn pwd-btn-cancel" onclick="closePasswordModal()">Cancelar</button>
+        <button class="pwd-btn pwd-btn-submit" onclick="submitPassword()">Ingresar</button>
+      </div>
+    </div>
+  </div>
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-header">
+      <div class="lightbox-counter" id="lightbox-counter">1 / 100</div>
+      <div class="lightbox-actions">
+        <button class="lightbox-heart-btn" id="lightbox-heart" onclick="toggleSelectCurrentLightbox()">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+    </div>
+    <div class="lightbox-body">
+      <button class="lightbox-nav lightbox-prev" onclick="prevImage()">&lsaquo;</button>
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Vista ampliada">
+      <button class="lightbox-nav lightbox-next" onclick="nextImage()">&rsaquo;</button>
+    </div>
+    <div class="lightbox-caption" id="lightbox-filename">foto.jpg</div>
+  </div>
+  <script>
+    // URL DE TU GOOGLE APPS SCRIPT
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq-kG8G-nu12nuPfky-cdAbxCG7Wqw_5jljFuhPLDYy3OieRsq789nVCqUMR81WZJo/exec"; 
+    const GALERIA_IDENTIFICADOR = "G001"; 
+    let fullGalleryData = [];
+    let filteredGalleryData = [];
+    let selectedImages = new Map();
+    let currentCategory = "TODAS";
+    let categoriesList = [];
+    let isOnlySelectedFilter = false;
+    let currentLightboxIndex = 0;
+    let saveTimeout = null;
+    let requiereClave = false;
+    let claveGuardadaEnSesion = "";
+    let pendingActionItem = null;
+
+    function cleanFileName(filename) {
+      if (!filename) return "";
+      return filename.replace(/\.[^/.]+$/, "").trim().toLowerCase();
+    }
+
+    async function loadGallery() {
+      const errorContainer = document.getElementById('error-container');
+      try {
+        const url = `${SCRIPT_URL}?galeria=${encodeURIComponent(GALERIA_IDENTIFICADOR)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.error) {
+          document.getElementById('hero-title').innerText = "Atención";
+          errorContainer.innerHTML = `<div class="error-box"><b>Error del sistema:</b> ${data.error}</div>`;
+          return;
+        }
+        requiereClave = !!data.hasPassword;
+        const fotografo = data.fotografo ? data.fotografo.trim() : "";
+        const titulo = data.titulo ? data.titulo.trim() : "";
+        const subtitulo = data.subtitulo ? data.subtitulo.trim() : "";
+        document.getElementById('hero-photographer').innerText = fotografo;
+        document.getElementById('nav-photographer').innerText = fotografo;
+        document.getElementById('hero-title').innerText = titulo;
+        document.getElementById('nav-title').innerText = titulo;
+        document.getElementById('hero-subtitle').innerText = subtitulo;
+        if (data.portadaUrl) {
+          const heroImg = document.getElementById('hero-img');
+          heroImg.src = data.portadaUrl;
+          heroImg.style.display = 'block';
+        }
+        fullGalleryData = data.images || [];
+        
+        // Mapear selección previa comparando nombres limpios (sin extensiones)
+        selectedImages.clear();
+        const guardadosSet = new Set((data.seleccionados || []).map(s => cleanFileName(s)));
+        
+        fullGalleryData.forEach(item => {
+          const nameClean = cleanFileName(item.name);
+          const idClean = cleanFileName(item.id);
+          if (guardadosSet.has(nameClean) || guardadosSet.has(idClean)) {
+            selectedImages.set(item.id, nameClean.toUpperCase());
+          }
+        });
+
+        document.getElementById('selected-count').innerText = selectedImages.size;
+        categoriesList = data.categoriesList || [];
+        
+        // Renderizar barra de categorías agregando la opción "SELECCIONADAS"
+        renderCategoryNav();
+        filterByCategory("TODAS");
+      } catch (err) {
+        document.getElementById('hero-title').innerText = "Error";
+        errorContainer.innerHTML = `<div class="error-box"><b>Error de conexión:</b> No se pudieron cargar las fotos.<br><small>${err.message}</small></div>`;
+      }
+    }
+
+    function renderCategoryNav() {
+      const navContainer = document.getElementById('category-nav');
+      navContainer.innerHTML = '';
+      navContainer.style.display = 'flex';
+      let list = [];
+      if (categoriesList.length > 0) {
+        list = ["TODAS", ...categoriesList];
+      } else {
+        list = ["TODAS"];
+      }
+      // Agregar categoría dinámica SELECCIONADAS
+      list.push("SELECCIONADAS");
+      list.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `category-btn ${cat === currentCategory ? 'active' : ''}`;
+        btn.innerText = cat;
+        btn.onclick = () => {
+          if (cat === "SELECCIONADAS") {
+            isOnlySelectedFilter = true;
+          } else {
+            isOnlySelectedFilter = false;
+          }
+          filterByCategory(cat);
+        };
+        navContainer.appendChild(btn);
+      });
+    }
+
+    function toggleFilterSelected() {
+      isOnlySelectedFilter = !isOnlySelectedFilter;
+      if (isOnlySelectedFilter) {
+        filterByCategory("SELECCIONADAS");
+      } else {
+        filterByCategory("TODAS");
+      }
+    }
+
+    function filterByCategory(category) {
+      currentCategory = category;
+      const counterBtn = document.getElementById('counter-btn');
+      if (category === "SELECCIONADAS") {
+        isOnlySelectedFilter = true;
+        filteredGalleryData = fullGalleryData.filter(img => selectedImages.has(img.id));
+        counterBtn.classList.add('active-filter');
+      } else {
+        isOnlySelectedFilter = false;
+        counterBtn.classList.remove('active-filter');
+        if (category === "TODAS") {
+          filteredGalleryData = [...fullGalleryData];
+        } else {
+          filteredGalleryData = fullGalleryData.filter(img => img.categoria === category);
+        }
+      }
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === category);
+      });
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const galleryContainer = document.getElementById('gallery');
+      galleryContainer.innerHTML = '';
+      if (filteredGalleryData.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'empty-state';
+        emptyMsg.innerHTML = isOnlySelectedFilter 
+          ? "Aún no has seleccionado ninguna foto. Haz clic en el corazón de tus fotos favoritas para agregar las fotos aquí." 
+          : "No hay fotos disponibles en esta sección.";
+        galleryContainer.appendChild(emptyMsg);
+        return;
+      }
+      filteredGalleryData.forEach((item, index) => {
+        const isSelected = selectedImages.has(item.id);
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        const img = document.createElement('img');
+        img.src = item.url;
+        img.alt = item.name;
+        img.loading = 'lazy';
+        img.onclick = () => openLightbox(index);
+        img.onerror = function() {
+          this.onerror = null;
+          this.src = `https://drive.google.com/thumbnail?id=${item.id}&sz=w800`;
+        };
+        const heartBtn = document.createElement('button');
+        heartBtn.className = `heart-btn ${isSelected ? 'selected' : ''}`;
+        heartBtn.id = `heart-btn-${item.id}`;
+        heartBtn.innerHTML = `
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        `;
+        heartBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleSelectAction(item);
+        });
+        card.appendChild(img);
+        card.appendChild(heartBtn);
+        galleryContainer.appendChild(card);
+      });
+    }
+
+    function handleSelectAction(item) {
+      if (requiereClave && !claveGuardadaEnSesion) {
+        pendingActionItem = item;
+        document.getElementById('pwd-modal').classList.add('active');
+        document.getElementById('pwd-input').focus();
+        return;
+      }
+      executeToggleSelect(item.id, item.name);
+    }
+
+    function submitPassword() {
+      const val = document.getElementById('pwd-input').value.trim();
+      if (!val) return;
+      claveGuardadaEnSesion = val;
+      closePasswordModal();
+      if (pendingActionItem) {
+        executeToggleSelect(pendingActionItem.id, pendingActionItem.name);
+        pendingActionItem = null;
+      }
+    }
+
+    function closePasswordModal() {
+      document.getElementById('pwd-modal').classList.remove('active');
+      document.getElementById('pwd-input').value = "";
+    }
+
+    function executeToggleSelect(id, name) {
+      const btn = document.getElementById(`heart-btn-${id}`);
+      const cleanName = cleanFileName(name).toUpperCase();
+      if (selectedImages.has(id)) {
+        selectedImages.delete(id);
+        if (btn) btn.classList.remove('selected');
+      } else {
+        selectedImages.set(id, cleanName);
+        if (btn) btn.classList.add('selected');
+      }
+      
+      document.getElementById('selected-count').innerText = selectedImages.size;
+      if (isOnlySelectedFilter) {
+        filterByCategory("SELECCIONADAS");
+      }
+      if (filteredGalleryData[currentLightboxIndex] && filteredGalleryData[currentLightboxIndex].id === id) {
+        updateLightboxHeartState();
+      }
+      debouncedSave();
+    }
+
+    function debouncedSave() {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveSelectionToSheet();
+      }, 600);
+    }
+
+    async function saveSelectionToSheet() {
+      const nombresSeleccionados = Array.from(selectedImages.values());
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            galeria: GALERIA_IDENTIFICADOR,
+            clave: claveGuardadaEnSesion,
+            seleccionados: nombresSeleccionados
+          })
+        });
+      } catch (err) {
+        console.error("Error al guardar selección:", err);
+      }
+    }
+
+    function scrollToGallery() {
+      document.getElementById('gallery-header').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* LIGHTBOX FUNCTIONS */
+    function openLightbox(index) {
+      currentLightboxIndex = index;
+      updateLightboxContent();
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function updateLightboxContent() {
+      const item = filteredGalleryData[currentLightboxIndex];
+      if (!item) return;
+      document.getElementById('lightbox-img').src = item.url;
+      document.getElementById('lightbox-filename').innerText = item.name;
+      document.getElementById('lightbox-counter').innerText = `${currentLightboxIndex + 1} / ${filteredGalleryData.length}`;
+      updateLightboxHeartState();
+    }
+
+    function updateLightboxHeartState() {
+      const item = filteredGalleryData[currentLightboxIndex];
+      if (!item) return;
+      const lbHeart = document.getElementById('lightbox-heart');
+      if (selectedImages.has(item.id)) {
+        lbHeart.classList.add('selected');
+      } else {
+        lbHeart.classList.remove('selected');
+      }
+    }
+
+    function toggleSelectCurrentLightbox() {
+      const item = filteredGalleryData[currentLightboxIndex];
+      if (item) handleSelectAction(item);
+    }
+
+    function prevImage() {
+      currentLightboxIndex = (currentLightboxIndex > 0) ? currentLightboxIndex - 1 : filteredGalleryData.length - 1;
+      updateLightboxContent();
+    }
+
+    function nextImage() {
+      currentLightboxIndex = (currentLightboxIndex < filteredGalleryData.length - 1) ? currentLightboxIndex + 1 : 0;
+      updateLightboxContent();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const lb = document.getElementById('lightbox');
+      if (lb.classList.contains('active')) {
+        if (e.key === 'ArrowLeft') prevImage();
+        if (e.key === 'ArrowRight') nextImage();
+        if (e.key === 'Escape') closeLightbox();
+      }
+    });
+
+    // Carga Inicial
+    loadGallery();
+  </script>
+</body>
+</html>
