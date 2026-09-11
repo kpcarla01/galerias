@@ -582,7 +582,8 @@
   <script>
     // URL DE TU GOOGLE APPS SCRIPT
     const SCRIPT_URL = "/api/galeria";
-    const GALERIA_IDENTIFICADOR = "G001"; 
+    const params = new URLSearchParams(window.location.search);
+    const GALERIA_IDENTIFICADOR = (params.get('g') || "G001").trim().toUpperCase(); 
     let fullGalleryData = [];
     let filteredGalleryData = [];
     let selectedImages = new Map();
